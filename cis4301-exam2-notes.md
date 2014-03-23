@@ -22,7 +22,6 @@ _Disclaimer: I am not responsible for any misinformation. If you use my notes an
 * Definition: "First normal form says that __each of your columns and each of your tables should contain one value just one value__, and there should be no repeating groups."
 * Example of violation:
 
-	```
 	Employee Table
 
 	|EmployeeName 	| Department	| ComputerSerial	|
@@ -149,10 +148,6 @@ _Disclaimer: I am not responsible for any misinformation. If you use my notes an
 	* Indexing is a trade off - make sure to use it wisely!
 	* But indexes can be tweaked without breaking applications.
 		* Indexes are just speed-ups - no applications rely on them for anything other than speed.
-		
-```
-	Last GitHub Gist update - 1817
-```
 
 * How do indexes work?
 	* Creates hash table or a b-tree
