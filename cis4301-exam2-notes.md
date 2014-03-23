@@ -12,6 +12,7 @@ _Disclaimer: I am not responsible for any misinformation. If you use my notes an
 	* [Second Normal Form](#second-normal-form)
 	* [Third Normal Form](#third-normal-form)
 * [Indexes](#indexes)
+* [Views](#views)
 
 ## Understanding Normalization
 
@@ -64,7 +65,7 @@ _Disclaimer: I am not responsible for any misinformation. If you use my notes an
 
 ### Second Normal Form
 
-* _Note: in order to go to 2NF, you __MUST__ by in 1NF._
+* _Note: in order to go to 2NF, you MUST be in 1NF._
 * Definition: "Any non-key field should be dependent on the entire primary key."
 * Normally a problem with a composite primary key
 * Example of violation:
@@ -99,7 +100,7 @@ _Disclaimer: I am not responsible for any misinformation. If you use my notes an
 	
 ### Third Normal Form
 
-* _Note: like 2NF, in order to go to 3NF, you __MUST__ be in 2NF and 1NF._
+* _Note: like 2NF, in order to go to 3NF, you MUST be in 2NF and 1NF._
 * Definition: "No non-key field is dependent on any other non-key field."
 * Example of violation:
 
@@ -148,7 +149,6 @@ _Disclaimer: I am not responsible for any misinformation. If you use my notes an
 	* Indexing is a trade off - make sure to use it wisely!
 	* But indexes can be tweaked without breaking applications.
 		* Indexes are just speed-ups - no applications rely on them for anything other than speed.
-
 * How do indexes work?
 	* Creates hash table or a b-tree
 		* Hash tables are good for quick lookups and point queries
@@ -156,7 +156,7 @@ _Disclaimer: I am not responsible for any misinformation. If you use my notes an
 			* Ex - "Give me one specific birthday on Facebook"
 		* B-trees are good for range queries
 			* Ex - "Give me all of the items greater than some value"
-* Creating indexes in Postgres
+* Creating indexes in PostgreSQL
 	* Documentation: http://www.postgresql.org/docs/9.3/static/indexes.html
 	* Basic (with b-tree):
 	
@@ -172,4 +172,29 @@ _Disclaimer: I am not responsible for any misinformation. If you use my notes an
 	
 		```sql
 		CREATE INDEX name ON table (lower(column));
+		```
+
+## Views
+
+* Views allow you to easily re-use queries.
+* PostgreSQL tutorial: http://www.postgresql.org/docs/9.3/static/tutorial-views.html
+* Creating views in PostgreSQL
+	* Documentation: http://www.postgresql.org/docs/9.3/static/sql-createview.html
+	* Basic:
+	
+		```sql
+		CREATE VIEW viewName AS
+			SELECT columns FROM table WHERE some > operators;
+		```
+	* Temporary view (dropped at the end of a session):
+	
+		```sql
+		CREATE TEMPORARY VIEW viewName AS
+			SELECT columns FROM table WHERE some > operators;
+		```
+* Using views in PostgreSQL
+	* Quite easy. Just use it like you would a table:
+		
+		```sql
+		SELECT * FROM viewName;
 		```
