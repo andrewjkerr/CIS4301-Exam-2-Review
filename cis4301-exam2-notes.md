@@ -1,5 +1,5 @@
 # CIS4301 Exam 2 Notes
-__Andrew Kerr <www.andrewjkerr.com>__
+__Compiled by: Andrew Kerr | www.andrewjkerr.com__
 
 These notes are compiled from various places such as the course textbook, some Lynda.com tutorials (Foundations of Programming: Databases with Simon Allardice, SQL Essential Training with Bill Weinman, and PostgreSQL 9 with PHP Essential Training with Bill Weinman), and the Internet.
 
