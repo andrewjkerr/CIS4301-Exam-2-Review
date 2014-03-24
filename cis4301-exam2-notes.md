@@ -67,6 +67,10 @@ _Disclaimer: I am not responsible for any misinformation. If you use my notes an
 	* Union Rule: {X -> Y, X -> Z} |= X -> YZ
 	* Psuedotransitive Rule: {X -> Y, WY -> Z} |= WX -> Z
 * Definition: Constraint between two sets of attributes from the database - denoted by X -> Y
+* Example: in a table containing SSNs and names, it can be said that SSN -> name (name is functionally dependent upon SSN) since a name can be uniquely determined from a SSN. However, name -> SSN is untrue because a person can have the same name, but different SSNs.
+* Different types of keys relating to FDs:
+	* Superkey: a set of attributes in which all attributes of the schema are functionally dependent.
+	* Candidate Key: "A Candidate Key can be any column or a combination of columns that can qualify as unique key in database. There can be multiple Candidate Keys in one table. Each Candidate Key can qualify as Primary Key." (from https://stackoverflow.com/questions/12813363/what-is-the-difference-between-a-candidate-key-and-a-primary-key)
 
 ##  Normalization
 
