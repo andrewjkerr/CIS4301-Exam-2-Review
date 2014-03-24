@@ -79,29 +79,29 @@ CREATE TABLE posts(
 	FOREIGN KEY(uid) REFERENCES users(uid)
 );
 ```
-* Enforcment:
+* Examples of enforcements (i.e. - an error will thrown when...):
 	* An insert or update to posts contained a uid not found in the users table
 	* A deletion of a user causes posts with that uid to "dangle."
-	* To fix any of the above:
-		* Reject the modification (default)
-		* Make the same changes to both tables
-			* Example: if a user gets deleted, delete all rows in the posts table with that uid.
-			* Example: if a uid gets updated, update all uids in the posts table.
-		* Set to NULL
-			* Example: if a user gets deleted, change that uid in the posts table to NULL.
-			* Example: if a uid gets updated, change that uid in the posts table to NULL.
-	* Choosing a policy:
-	
-		```sql
-		CREATE TABLE posts(
-			pid INT PRIMARY KEY,
-			uid INT,
-			...
-			FOREIGN KEY(uid) REFERENCES users(uid)
-				ON DELETE SET NULL
-				ON UPDATE CASCADE
-		);
-		```
+* To fix any of the above:
+	* Reject the modification (default)
+	* Make the same changes to both tables
+		* Example: if a user gets deleted, delete all rows in the posts table with that uid.
+		* Example: if a uid gets updated, update all uids in the posts table.
+	* Set to NULL
+		* Example: if a user gets deleted, change that uid in the posts table to NULL.
+		* Example: if a uid gets updated, change that uid in the posts table to NULL.
+* Choosing a policy:
+
+	```sql
+	CREATE TABLE posts(
+		pid INT PRIMARY KEY,
+		uid INT,
+		...
+		FOREIGN KEY(uid) REFERENCES users(uid)
+			ON DELETE SET NULL
+			ON UPDATE CASCADE
+	);
+	```
 
 ### Attribute-Based Checks
 * Constraints on the value of a particular attribute
@@ -442,3 +442,15 @@ CREATE ASSERTION FewBar CHECK (
     |A101	| 12		|
     |A102	| 14		|
     |B105	| 15		|
+	
+## Possible Exam Questions
+
+_Disclaimer: these are only my best guesses from what Christan has mentioned in class or what I can come up with based on the topic._
+* Advanced SQL queries like Assignment #3!
+	* Specifically window functions
+* Why use rank() rather than limit?
+	* _Note: this was actually mentioned in the review Christan gave on Friday._
+* What are the different types of views? How are they updated?
+* Write a trigger to do x when y gets z'd.
+* Given a schema, offer advice to normalize to XNF (x being 1, 2, or 3.)
+* Given the following commonly used queries, recommend which columns that should be indexed.
