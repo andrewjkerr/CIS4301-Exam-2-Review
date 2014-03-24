@@ -22,6 +22,7 @@ _Disclaimer: I am not responsible for any misinformation. If you use my notes an
 	* [First Normal Form](#first-normal-form)
 	* [Second Normal Form](#second-normal-form)
 	* [Third Normal Form](#third-normal-form)
+* [Possible Exam Questions](#possible-exam-questions)
 
 ## Constraints
 
