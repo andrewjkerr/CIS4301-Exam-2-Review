@@ -1,6 +1,7 @@
-![Doge loves Databases!](https://scontent-a-dfw.xx.fbcdn.net/hphotos-frc3/t31.0-8/1498042_10201569571896659_1592321872_o.jpg)
 # CIS4301 Exam 2 Notes
 __Compiled by: Andrew Kerr | www.andrewjkerr.com__
+
+![Doge loves Databases!](https://scontent-a-dfw.xx.fbcdn.net/hphotos-frc3/t31.0-8/1498042_10201569571896659_1592321872_o.jpg)
 
 These notes are compiled from various places such as the course textbook, some Lynda.com tutorials (Foundations of Programming: Databases with Simon Allardice, SQL Essential Training with Bill Weinman, and PostgreSQL 9 with PHP Essential Training with Bill Weinman), [Ryan Roden-Corrent's really fantastic class notes](https://github.com/murphyslaw480/cis4301-notes), and the Internet.
 
