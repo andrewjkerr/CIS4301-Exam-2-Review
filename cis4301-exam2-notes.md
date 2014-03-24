@@ -149,6 +149,54 @@ CREATE ASSERTION FewBar CHECK (
 
 * Triggers are only executed when a specified condition occurs
 	* Easier to implement than complex constraints
+* Why use triggers instead of assertions?
+	* For one, the DBMS can't tell when assertions need to be checked
+	* Attribute and tuple-based checks are checked at known times, but not that powerful
+	* Enter triggers!
+* Triggers are event-condition-action rules (ECA rules)
+	* Event: typically a type of database modification
+	* Condition: any SQL boolean-valued expression
+	* Action: any SQL statements
+* Triggers in PostgreSQL: http://www.postgresql.org/docs/9.3/static/triggers.html
+* Creating triggers in PostgreSQL
+	* Documentation: http://www.postgresql.org/docs/9.3/static/sql-createtrigger.html
+	* First, you create a function that returns a trigger:
+	
+	```sql
+	CREATE FUNCTION test() RETURNS trigger as $test$
+		BEGIN
+			IF EXISTS(
+				SELECT * FROM users WHERE uid = NEW.uid
+			) THEN
+				RAISE EXCPTION 'ERROR!';
+			END IF;
+			RETURN NEW;
+		END;
+	
+	$test$ LANGUAGE plpgsql;
+	```
+	* Then, you create the trigger:
+	
+	```sql
+	CREATE TRIGGER test BEFORE INSERT OR UPDATE ON users
+		FOR EACH ROW EXEUTE PROCEURE test();
+	```
+* Creating triggers (from the textbook):
+	* The trigger is all one database-schema element
+	* Example:
+	
+	```sql
+	CREATE TRIGGER PriceTrig
+		AFTER UPDATE OF price ON Sells
+		REFERENCING
+			OLD ROW AS ooo
+			NEW ROW AS nnn
+		FOR EACH ROW
+		WHEN(nnn.price > ooo.price + 1.00)
+		INSERT INTO RipoffBars
+			VALUES(nnn.bar);
+	```
+* _Note: Christan said either syntax is fine._
 
 ## Indexes
 
