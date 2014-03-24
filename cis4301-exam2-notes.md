@@ -1,20 +1,74 @@
 # CIS4301 Exam 2 Notes
 __Compiled by: Andrew Kerr | www.andrewjkerr.com__
 
-These notes are compiled from various places such as the course textbook, some Lynda.com tutorials (Foundations of Programming: Databases with Simon Allardice, SQL Essential Training with Bill Weinman, and PostgreSQL 9 with PHP Essential Training with Bill Weinman), and the Internet.
+These notes are compiled from various places such as the course textbook, some Lynda.com tutorials (Foundations of Programming: Databases with Simon Allardice, SQL Essential Training with Bill Weinman, and PostgreSQL 9 with PHP Essential Training with Bill Weinman), [Ryan Roden-Corrent's really fantastic class notes](https://github.com/murphyslaw480/cis4301-notes) and the Internet.
 
 _Disclaimer: I am not responsible for any misinformation. If you use my notes and get a problem wrong because of it, it's not my fault. Seriously._
 
 ## Table of Contents
 
-* [Understanding Normalization](#understanding-normalization)
+* [Informal Design Guidelines](#informal-design-guidelines)
+* [Functional Dependencies](#functional-dependencies)
+* [Normalization](#understanding-normalization)
 	* [First Normal Form](#first-normal-form)
 	* [Second Normal Form](#second-normal-form)
 	* [Third Normal Form](#third-normal-form)
 * [Indexes](#indexes)
 * [Views](#views)
 
-## Understanding Normalization
+## Informal Design Guidelines
+
+* Slides from class: https://www.cise.ufl.edu/class/cis4301sp14/slides/fd.pdf
+	* Do not recommend - very unclear and confusing.
+* We can discuss database quality!
+	* Levels of quality discussion
+		* Logical (conceptual) level
+		* Implementation (physical storage) level
+	* Measures of quality
+		* Clear attribute semantics
+		* Reducing redundant information
+		* Reducing NULLs
+		* Disallowing possibility of generating spurious tuples
+			* "Spurious tuples are created when two tables are joined on attributes that are neither primary keys nor foreign keys." (From http://www.spurioustuples.net/?page_id=16)
+
+### Guideline 1
+
+* Design the relation schema so it's easy to explain its meaning
+* Do not combine attributes from multiple entity types and relationship types into a single relation
+	* Example: Do not combine employee and department information into the same table
+
+### Guideline 2
+
+* Design the relation schema so that no update anomalies are present in the relations
+	* Update anomalies happen when you need to update data in more than one spot
+	* Sometimes unavoidable so make sure to mark them well
+		* Note clearly and make sure your application updates the database correctly
+
+### Guideline 3
+
+* Avoid placing attributes in a relation whose values may frequently be NULL
+* If NULLs are unavoidable, make sure they apply to a minority of tuples
+* Why are NULLs bad?
+	* Wasted storage space - even though it's NULL, the space is still reserved.
+
+### Guideline 4
+
+* Design relation schemas to be joined with equality conditions on attributes that are approrpriately related
+* Avoid relations that contain matching attributes that are not (foreign key, primary key) combinations
+
+## Functional Dependencies
+
+* Slides from class: https://www.cise.ufl.edu/class/cis4301sp14/slides/fd.pdf
+* Inference rules for functional dependencies (aka Armstrong's Axioms):
+	* Reflexive Rule: X -> X
+	* Augmentation Rule: {X -> Y} |= XZ -> YZ
+	* Transitive Rule: {X -> Y, Y -> Z } |= X -> Z
+	* Decomposition Rule: {X -> YZ} |= X -> Y
+	* Union Rule: {X -> Y, X -> Z} |= X -> YZ
+	* Psuedotransitive Rule: {X -> Y, WY -> Z} |= WX -> Z
+* Definition: Constraint between two sets of attributes from the database - denoted by X -> Y
+
+##  Normalization
 
 * Normalization is all about the redundancy of information. Below, you'll get an idea of how normalization helps eliminate redundancy and allows for easier updating/insertion/deletion.
 
@@ -178,6 +232,11 @@ _Disclaimer: I am not responsible for any misinformation. If you use my notes an
 
 * Views allow you to easily re-use queries.
 * PostgreSQL tutorial: http://www.postgresql.org/docs/9.3/static/tutorial-views.html
+* Types of Views
+	* Virtual: Just the query is stored, not the results
+	* Materialized: The query is actually constructed and stored
+		* In PostgreSQL, materialized views can be refreshed using ```REFRESH MATERIALIZED VIEW```
+	* More in-depth analysis/information on StackOverflow: https://stackoverflow.com/questions/93539/what-is-the-difference-between-views-and-materialized-views-in-oracle
 * Creating views in PostgreSQL
 	* Documentation: http://www.postgresql.org/docs/9.3/static/sql-createview.html
 	* Basic:
@@ -190,6 +249,12 @@ _Disclaimer: I am not responsible for any misinformation. If you use my notes an
 	
 		```sql
 		CREATE TEMPORARY VIEW viewName AS
+			SELECT columns FROM table WHERE some > operators;
+		```
+	* Materialzied view (as discussed above):
+	
+		```sql
+		CREATE MATERIALIZED VIEW viewName AS
 			SELECT columns FROM table WHERE some > operators;
 		```
 * Using views in PostgreSQL
