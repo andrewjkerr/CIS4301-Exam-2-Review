@@ -34,6 +34,7 @@ _Disclaimer: I am not responsible for any misinformation. If you use my notes an
 ### Keys
 * Single-Attribute Keys
 	* Place ```PRIMARY KEY``` or ```UNIQUE``` after the type in the declaration of the attribute
+		* NOTE: The differences between them is that a table may only have one attribute declared with '''PRIMARY KEY''' and it can't have a NULL value for any tuple
 	* Example:
 	
 	```sql
@@ -81,10 +82,12 @@ CREATE TABLE posts(
 	uid INT,
 	...
 	FOREIGN KEY(uid) REFERENCES users(uid)
+	
+-- NOTE: no difference between the two, use based on ease of reading/ect
 );
 ```
 * Examples of enforcements (i.e. - an error will thrown when...):
-	* An insert or update to posts contained a uid not found in the users table
+	* An insert or update to posts with a tuple containing a uid not found in the users table
 	* A deletion of a user causes posts with that uid to "dangle."
 * To fix any of the above:
 	* Reject the modification (default)
@@ -281,9 +284,13 @@ CREATE ASSERTION FewBar CHECK (
 * Views allow you to easily re-use queries.
 * PostgreSQL tutorial: http://www.postgresql.org/docs/9.3/static/tutorial-views.html
 * Types of Views
-	* Virtual: Just the query is stored, not the results
-	* Materialized: The query is actually constructed and stored
+	* Virtual: Just the query is stored, not the results (lower storage cost, higher performance cost)
+	* Materialized: The query is actually constructed and stored (higher storage cost, lower performance cost)
+		* Only as good as their last value update (or refresh)
 		* In PostgreSQL, materialized views can be refreshed using ```REFRESH MATERIALIZED VIEW```
+	* Why use Materialized over Virtual? It depends on your performance needs. 
+		* If you have a really heavy query that you will need to access the results of multiple times, the storage cost loss might be worth the performance gain.
+		* If you have a really light query that you only need a value once (and maybe accuracy of that value is really important), the performance loss might be worth the storage saving.
 	* More in-depth analysis/information on StackOverflow: https://stackoverflow.com/questions/93539/what-is-the-difference-between-views-and-materialized-views-in-oracle
 * Creating views in PostgreSQL
 	* Documentation: http://www.postgresql.org/docs/9.3/static/sql-createview.html
