@@ -7,14 +7,93 @@ _Disclaimer: I am not responsible for any misinformation. If you use my notes an
 
 ## Table of Contents
 
+* [Indexes](#indexes)
+* [Views](#views)
 * [Informal Design Guidelines](#informal-design-guidelines)
 * [Functional Dependencies](#functional-dependencies)
 * [Normalization](#understanding-normalization)
 	* [First Normal Form](#first-normal-form)
 	* [Second Normal Form](#second-normal-form)
 	* [Third Normal Form](#third-normal-form)
-* [Indexes](#indexes)
-* [Views](#views)
+
+## Indexes
+
+* Indexes are all about speed of access!
+	* Full table scans are inefficient! Indexes make it much faster to locate information so the DBMS does not have to do a full table scan to find your data.
+* Clustered Index: The database will order the data in a table on the physical disk itself based on the column defined as the clustered index.
+	* A lot of DBMS will automatically make the primary key the clustered index.
+* You choose indexes on how often you query using specific attributes.
+	* Example: If the primary key is a uid, but you often refer to users by their username, it's helpful to create a secondary index (a non-clustered index) with the username column.
+		* Note: Using a non-clustered index is NOT as quick as using a clustered index, but it's still much more efficient than a full table scan.
+* Well, why don't we index everything?
+	* Every index has a cost
+		* "Indexes are a benefit when reading data, but they're a detriment when writing or changing it, because they must be maintained."
+		* It's much better to do a few full table scans rather than select a column that you do not use a lot.
+* Tips for indexing
+	* Selecting secondary indexes are difficult until you find out how your database is being used.
+	* Indexing is a trade off - make sure to use it wisely!
+	* But indexes can be tweaked without breaking applications.
+		* Indexes are just speed-ups - no applications rely on them for anything other than speed.
+* How do indexes work?
+	* Creates hash table or a b-tree
+		* Hash tables are good for quick lookups and point queries
+			* Point queries: I want 1 row out of 1 billion rows
+			* Ex - "Give me one specific birthday on Facebook"
+		* B-trees are good for range queries
+			* Ex - "Give me all of the items greater than some value"
+* Creating indexes in PostgreSQL
+	* Documentation: http://www.postgresql.org/docs/9.3/static/indexes.html
+	* Basic (with b-tree):
+	
+		```sql
+		CREATE INDEX name ON table (column);
+		```
+	* Basic (with a hash table):
+	
+		```sql
+		CREATE INDEX name ON table USING hash (column);
+		```
+	* Case-insensitive:
+	
+		```sql
+		CREATE INDEX name ON table (lower(column));
+		```
+
+## Views
+
+* Views allow you to easily re-use queries.
+* PostgreSQL tutorial: http://www.postgresql.org/docs/9.3/static/tutorial-views.html
+* Types of Views
+	* Virtual: Just the query is stored, not the results
+	* Materialized: The query is actually constructed and stored
+		* In PostgreSQL, materialized views can be refreshed using ```REFRESH MATERIALIZED VIEW```
+	* More in-depth analysis/information on StackOverflow: https://stackoverflow.com/questions/93539/what-is-the-difference-between-views-and-materialized-views-in-oracle
+* Creating views in PostgreSQL
+	* Documentation: http://www.postgresql.org/docs/9.3/static/sql-createview.html
+	* Basic:
+	
+		```sql
+		CREATE VIEW viewName AS
+			SELECT columns FROM table WHERE some > operators;
+		```
+	* Temporary view (dropped at the end of a session):
+	
+		```sql
+		CREATE TEMPORARY VIEW viewName AS
+			SELECT columns FROM table WHERE some > operators;
+		```
+	* Materialzied view (as discussed above):
+	
+		```sql
+		CREATE MATERIALIZED VIEW viewName AS
+			SELECT columns FROM table WHERE some > operators;
+		```
+* Using views in PostgreSQL
+	* Quite easy. Just use it like you would a table:
+		
+		```sql
+		SELECT * FROM viewName;
+		```
 
 ## Informal Design Guidelines
 
@@ -188,82 +267,3 @@ _Disclaimer: I am not responsible for any misinformation. If you use my notes an
     |A101	| 12		|
     |A102	| 14		|
     |B105	| 15		|
-
-## Indexes
-
-* Indexes are all about speed of access!
-	* Full table scans are inefficient! Indexes make it much faster to locate information so the DBMS does not have to do a full table scan to find your data.
-* Clustered Index: The database will order the data in a table on the physical disk itself based on the column defined as the clustered index.
-	* A lot of DBMS will automatically make the primary key the clustered index.
-* You choose indexes on how often you query using specific attributes.
-	* Example: If the primary key is a uid, but you often refer to users by their username, it's helpful to create a secondary index (a non-clustered index) with the username column.
-		* Note: Using a non-clustered index is NOT as quick as using a clustered index, but it's still much more efficient than a full table scan.
-* Well, why don't we index everything?
-	* Every index has a cost
-		* "Indexes are a benefit when reading data, but they're a detriment when writing or changing it, because they must be maintained."
-		* It's much better to do a few full table scans rather than select a column that you do not use a lot.
-* Tips for indexing
-	* Selecting secondary indexes are difficult until you find out how your database is being used.
-	* Indexing is a trade off - make sure to use it wisely!
-	* But indexes can be tweaked without breaking applications.
-		* Indexes are just speed-ups - no applications rely on them for anything other than speed.
-* How do indexes work?
-	* Creates hash table or a b-tree
-		* Hash tables are good for quick lookups and point queries
-			* Point queries: I want 1 row out of 1 billion rows
-			* Ex - "Give me one specific birthday on Facebook"
-		* B-trees are good for range queries
-			* Ex - "Give me all of the items greater than some value"
-* Creating indexes in PostgreSQL
-	* Documentation: http://www.postgresql.org/docs/9.3/static/indexes.html
-	* Basic (with b-tree):
-	
-		```sql
-		CREATE INDEX name ON table (column);
-		```
-	* Basic (with a hash table):
-	
-		```sql
-		CREATE INDEX name ON table USING hash (column);
-		```
-	* Case-insensitive:
-	
-		```sql
-		CREATE INDEX name ON table (lower(column));
-		```
-
-## Views
-
-* Views allow you to easily re-use queries.
-* PostgreSQL tutorial: http://www.postgresql.org/docs/9.3/static/tutorial-views.html
-* Types of Views
-	* Virtual: Just the query is stored, not the results
-	* Materialized: The query is actually constructed and stored
-		* In PostgreSQL, materialized views can be refreshed using ```REFRESH MATERIALIZED VIEW```
-	* More in-depth analysis/information on StackOverflow: https://stackoverflow.com/questions/93539/what-is-the-difference-between-views-and-materialized-views-in-oracle
-* Creating views in PostgreSQL
-	* Documentation: http://www.postgresql.org/docs/9.3/static/sql-createview.html
-	* Basic:
-	
-		```sql
-		CREATE VIEW viewName AS
-			SELECT columns FROM table WHERE some > operators;
-		```
-	* Temporary view (dropped at the end of a session):
-	
-		```sql
-		CREATE TEMPORARY VIEW viewName AS
-			SELECT columns FROM table WHERE some > operators;
-		```
-	* Materialzied view (as discussed above):
-	
-		```sql
-		CREATE MATERIALIZED VIEW viewName AS
-			SELECT columns FROM table WHERE some > operators;
-		```
-* Using views in PostgreSQL
-	* Quite easy. Just use it like you would a table:
-		
-		```sql
-		SELECT * FROM viewName;
-		```
