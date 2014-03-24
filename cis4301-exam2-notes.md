@@ -24,6 +24,7 @@ _Disclaimer: I am not responsible for any misinformation. If you use my notes an
 	* [Third Normal Form](#third-normal-form)
 
 ## Constraints
+
 * A constraint is a relationship among data elements that the DBMS is required to enforce
 	
 ### Keys
@@ -129,6 +130,7 @@ CREATE TABLE sells(
 );
 ```
 ### Assertions
+* _Confirmed by Christan to not be on the exam, but these are pretty cool :)_
 * These are database-schema elements - like relations or views
 * Defined by:
 
@@ -144,6 +146,7 @@ CREATE ASSERTION FewBar CHECK (
 * These checks are performed after every modification.
 
 ## Triggers
+
 * Triggers are only executed when a specified condition occurs
 	* Easier to implement than complex constraints
 
@@ -242,27 +245,23 @@ CREATE ASSERTION FewBar CHECK (
 			* "Spurious tuples are created when two tables are joined on attributes that are neither primary keys nor foreign keys." (From http://www.spurioustuples.net/?page_id=16)
 
 ### Guideline 1
-
 * Design the relation schema so it's easy to explain its meaning
 * Do not combine attributes from multiple entity types and relationship types into a single relation
 	* Example: Do not combine employee and department information into the same table
 
 ### Guideline 2
-
 * Design the relation schema so that no update anomalies are present in the relations
 	* Update anomalies happen when you need to update data in more than one spot
 	* Sometimes unavoidable so make sure to mark them well
 		* Note clearly and make sure your application updates the database correctly
 
 ### Guideline 3
-
 * Avoid placing attributes in a relation whose values may frequently be NULL
 * If NULLs are unavoidable, make sure they apply to a minority of tuples
 * Why are NULLs bad?
 	* Wasted storage space - even though it's NULL, the space is still reserved.
 
 ### Guideline 4
-
 * Design relation schemas to be joined with equality conditions on attributes that are approrpriately related
 * Avoid relations that contain matching attributes that are not (foreign key, primary key) combinations
 
@@ -287,7 +286,6 @@ CREATE ASSERTION FewBar CHECK (
 * Normalization is all about the redundancy of information. Below, you'll get an idea of how normalization helps eliminate redundancy and allows for easier updating/insertion/deletion.
 
 ### First Normal Form
-
 * Definition: "First normal form says that __each of your columns and each of your tables should contain one value just one value__, and there should be no repeating groups."
 * Example of violation:
 
@@ -332,7 +330,6 @@ CREATE ASSERTION FewBar CHECK (
 	* _In this case, the foreign key of the Computer Table is the EmployeeName_
 
 ### Second Normal Form
-
 * _Note: in order to go to 2NF, you MUST be in 1NF._
 * Definition: "Any non-key field should be dependent on the entire primary key."
 * Normally a problem with a composite primary key
@@ -367,7 +364,6 @@ CREATE ASSERTION FewBar CHECK (
     |M345	| Begin DBs      |
 	
 ### Third Normal Form
-
 * _Note: like 2NF, in order to go to 3NF, you MUST be in 2NF and 1NF._
 * Definition: "No non-key field is dependent on any other non-key field."
 * Example of violation:
