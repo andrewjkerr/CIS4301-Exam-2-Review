@@ -7,6 +7,13 @@ _Disclaimer: I am not responsible for any misinformation. If you use my notes an
 
 ## Table of Contents
 
+* [Constraints](#constraints)
+	* [Keys](#keys)
+	* [Foreign Keys](#foreign-keys)
+	* [Attribute-Based Checks](#attribute-based-checks)
+	* [Tuple-Based Checks](#tuple-based-checks)
+	* [Assertions](#assertions)
+* [Triggers](#triggers)
 * [Indexes](#indexes)
 * [Views](#views)
 * [Informal Design Guidelines](#informal-design-guidelines)
@@ -15,6 +22,130 @@ _Disclaimer: I am not responsible for any misinformation. If you use my notes an
 	* [First Normal Form](#first-normal-form)
 	* [Second Normal Form](#second-normal-form)
 	* [Third Normal Form](#third-normal-form)
+
+## Constraints
+* A constraint is a relationship among data elements that the DBMS is required to enforce
+	
+### Keys
+* Single-Attribute Keys
+	* Place ```PRIMARY KEY``` or ```UNIQUE``` after the type in the declaration of the attribute
+	* Example:
+	
+	```sql
+	CREATE TABLE users(
+		uid INT PRIMARY KEY,
+		name VARCHAR(255),
+		...
+	);
+	```
+* Multi-Attribute Keys
+	* Exactly what it sounds like!
+	* Example:
+	
+	```sql
+	CREATE TABLE users(
+		uid INT,
+		username VARCHAR(25),
+		name VARCHAR(255),
+		...
+		PRIMARY KEY(uid, username)
+	);
+	```
+
+### Foreign Keys
+* Values appearing in attributes of one relation must appear together in certain attributes of another relation
+* Example: in a social media app, we would expect uid to show up in both users and in posts.
+
+```sql
+CREATE TABLE users(
+	uid INT PRIMARY KEY,
+	name VARCHAR(255),
+	...
+);
+
+-- Express foreign keys one of two ways:
+CREATE TABLE posts(
+	pid INT PRIMARY KEY,
+	uid INT REFERENCES users(uid),	-- user id of the user that made the post
+	...
+);
+
+-- or:
+CREATE TABLE posts(
+	pid INT PRIMARY KEY,
+	uid INT,
+	...
+	FOREIGN KEY(uid) REFERENCES users(uid)
+);
+```
+* Enforcment:
+	* An insert or update to posts contained a uid not found in the users table
+	* A deletion of a user causes posts with that uid to "dangle."
+	* To fix any of the above:
+		* Reject the modification (default)
+		* Make the same changes to both tables
+			* Example: if a user gets deleted, delete all rows in the posts table with that uid.
+			* Example: if a uid gets updated, update all uids in the posts table.
+		* Set to NULL
+			* Example: if a user gets deleted, change that uid in the posts table to NULL.
+			* Example: if a uid gets updated, change that uid in the posts table to NULL.
+	* Choosing a policy:
+	
+		```sql
+		CREATE TABLE posts(
+			pid INT PRIMARY KEY,
+			uid INT,
+			...
+			FOREIGN KEY(uid) REFERENCES users(uid)
+				ON DELETE SET NULL
+				ON UPDATE CASCADE
+		);
+		```
+
+### Attribute-Based Checks
+* Constraints on the value of a particular attribute
+* The condition may use the name of the attribute, but __any other relation or attribute name must be in a subquery.__
+* Example:
+
+```sql
+CREATE TABLE sells(
+	bar CHAR(20),
+	beer CHAR(20) CHECK (beer IN (SELECT name FROM beers)),
+	price REAL CHECK (price <= 5.00)
+);
+```
+* These checks are only performed when a value for that attribute has been inserted or updated!
+
+### Tuple-Based Checks
+* CHECK (condition) may be added as a relation-schema element
+* Example:
+
+```sql
+CREATE TABLE sells(
+	bar CHAR(20),
+	beer CHAR(20),
+	price REAL,
+	CHECK (bar = 'Joe''s Bar' OR price <= 5.00)
+);
+```
+### Assertions
+* These are database-schema elements - like relations or views
+* Defined by:
+
+```sql
+CREATE ASSERTION name CHECK (condition);
+```
+* Example:
+```sql
+CREATE ASSERTION FewBar CHECK (
+	(SELECT COUNT(*) FROM bars) <= (SELECT COUNT(*) FROM drinkers)
+);
+```
+* These checks are performed after every modification.
+
+## Triggers
+* Triggers are only executed when a specified condition occurs
+	* Easier to implement than complex constraints
 
 ## Indexes
 
