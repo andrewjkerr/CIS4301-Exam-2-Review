@@ -1,3 +1,4 @@
+![Doge loves Databases!](https://scontent-a-dfw.xx.fbcdn.net/hphotos-frc3/t31.0-8/1498042_10201569571896659_1592321872_o.jpg)
 # CIS4301 Exam 2 Notes
 __Compiled by: Andrew Kerr | www.andrewjkerr.com__
 
@@ -14,6 +15,7 @@ _Disclaimer: I am not responsible for any misinformation. If you use my notes an
 	* [Tuple-Based Checks](#tuple-based-checks)
 	* [Assertions](#assertions)
 * [Triggers](#triggers)
+* [Transactions](#transactions)
 * [Indexes](#indexes)
 * [Views](#views)
 * [Informal Design Guidelines](#informal-design-guidelines)
@@ -199,6 +201,37 @@ CREATE ASSERTION FewBar CHECK (
 	```
 * _Note: Christan said either syntax is fine._
 
+## Transactions
+
+* DBMSs are normally being accessed by many users or processes at the same time and a DBMS needs to keep processes from troublesome interactions.
+* Definition: process involving database queries and/or modification
+	* Normally with strong properties regarding concurrency
+	* Formed in SQL from single statements or explicit programmer control
+* ACID
+	* Atomic: "all or nothing" - whole transaction or none is done
+	* Consistent: database constraints preserved
+	* Isolated: it appears to the user as if only one process executes at a time
+	* Durable: effects of a process survive a crash
+* COMMIT: SQL statement that causes a transaction to complete
+	* It's database modifications are now permanent in the database
+* ROLLBACK: SQL statement that causes the transaction to end by aborting
+	* No effects on the database
+	* Note: failures like division by 0 or a constraint violation can also cause a rollback, even if the programmer does not request it
+* Isolation Levels
+	* SQL defines 4 isolation levels which are choices about what interactions are allowed by transactions that execute at about the same time
+		* SERIALIZABLE allows for a transaction to see the database before/after another transaction has been run, but not during
+		* READ COMMITTED allows for a transaction to only see committed data, but it's not necessarily the same data each time
+		* REPEATABLE READ allows for a transaction to see committed data, but might return more tuples with the second and subsequent reads
+		* READ UNCOMMITTED allows for a transaction to see all data - even if it was written by a transaction that has not committed
+	* Only serializable are ACID transactions
+	* Within a transaction we can say:
+	
+	```sql
+	SET TRANSACTION ISOLATION LEVEL X
+	-- where X is SERIALIZABLE, REPEATABLE READ, READ COMMITTED, READ UNCOMMITTED
+	```
+	* Isolation is set at a per-user level!
+
 ## Indexes
 
 * Indexes are all about speed of access!
@@ -277,6 +310,20 @@ CREATE ASSERTION FewBar CHECK (
 		```sql
 		SELECT * FROM viewName;
 		```
+* Triggers and Views
+	* Since you cannot modify a virtual view, you can use a trigger to modify the data!
+	* Example:
+	
+	```sql
+	CREATE TRIGGER ViewTrig
+		INSTEAD OF INSERT ON View
+		REFERENCING NEW ROW AS n
+		FOR EACH ROW
+		BEGIN
+			INSERT INTO Likes VALUES(n.drinker, n.beer);
+			INSERT INTO Sells(bar, beer) VALUES (n. bar, n.beer);
+		END;
+	```
 
 ## Informal Design Guidelines
 
